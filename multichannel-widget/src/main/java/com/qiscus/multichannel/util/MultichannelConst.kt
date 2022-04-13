@@ -2,7 +2,7 @@ package com.qiscus.multichannel.util
 
 import com.qiscus.sdk.chat.core.QiscusCore
 
-internal object MultichannelConst {
+object MultichannelConst {
 
     val TAKE_PICTURE_REQUEST = 3
     val IMAGE_GALLERY_REQUEST = 7

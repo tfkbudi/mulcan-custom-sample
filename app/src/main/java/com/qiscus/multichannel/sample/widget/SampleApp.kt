@@ -37,23 +37,10 @@ class SampleApp : MultiDexApplication() {
             }
     }
 
-    private val appId = "your_app_id" // change with your AppId
+    private val appId = "hcniw-4jzqes6ohbmdtbg" // change with your AppId
     private val localKey = "qiscus_multichannel_user" // change with your localKey
 
-    private val config = QiscusMultichannelWidgetConfig()
-        .setEnableLog(true)  // change it to false if your app is ready for release
-        .setEnableNotification(true)
-        .setNotificationListener(object : MultichannelNotificationListener {
 
-            override fun handleMultichannelListener(context: Context?, qiscusComment: QMessage?) {
-                // show your notification here
-                if (context != null && qiscusComment != null) {
-                    PNUtil.showPn(context, qiscusComment)
-                }
-            }
-
-        })
-        .setNotificationIcon(R.drawable.ic_notification)
 
     private val color = QiscusMultichannelWidgetColor()
         .setStatusBarColor(R.color.qiscusStatusBar)
@@ -81,12 +68,16 @@ class SampleApp : MultiDexApplication() {
         //just 1 in 1 lifecircle
         qiscusMultiChatEngine = QiscusMultiChatEngine()
 
+        val config = QiscusMultichannelWidgetConfig()
+            .setEnableLog(true)  // change it to false if your app is ready for release
+            .setEnableNotification(false)
+            .setNotificationIcon(R.drawable.ic_notification)
+
         qiscusMultichannelWidget = QiscusMultichannelWidget.setup(
             this,
             qiscusMultiChatEngine.get(MULTICHANNEL_CORE),
             appId,
             config,
-//            color,
             localKey
         )
 

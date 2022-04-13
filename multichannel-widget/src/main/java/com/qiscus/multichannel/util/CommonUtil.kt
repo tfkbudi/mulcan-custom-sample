@@ -18,7 +18,7 @@ fun Context.showToast(message: String) {
 }
 
 fun getAuthority(): String {
-    return MultichannelConst.qiscusCore()?.apps?.packageName!!
+    return "${MultichannelConst.qiscusCore()?.apps?.packageName}"
 }
 
 fun EditText.afterTextChangedDelayed(

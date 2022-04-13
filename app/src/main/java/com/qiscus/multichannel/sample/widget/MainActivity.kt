@@ -10,9 +10,13 @@ import androidx.core.content.ContextCompat
 import com.qiscus.multichannel.QiscusMultichannelWidgetConfig
 import com.qiscus.multichannel.sample.R
 import com.qiscus.multichannel.sample.widget.service.FirebaseServices
+import com.qiscus.multichannel.util.MultichannelConst
 import com.qiscus.multichannel.util.QiscusChatRoomBuilder
+import com.qiscus.multichannel.util.getAuthority
 import com.qiscus.sdk.chat.core.data.model.QChatRoom
 import kotlinx.android.synthetic.main.activity_main.*
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,7 +47,7 @@ class MainActivity : AppCompatActivity() {
                         "city" to "jogja",
                         "job" to "developer"
                     ) // userProperties are additional details of the user(optional)
-                    qiscusMultichannelWidget.setUser(email, username, avatarUrl, userProperties)
+//                    qiscusMultichannelWidget.setUser(email, username, avatarUrl, userProperties)
 
                     initChat(0)
 
@@ -60,52 +64,40 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initChat(channelId: Int) {
-        qiscusMultichannelWidget.initiateChat()
-            .showLoadingWhenInitiate(false)
-//            .setChannelId(channelId) // manual set channels id
-            .setRoomTitle("Custom Title")
-            .setAvatar(QiscusMultichannelWidgetConfig.Avatar.DISABLE)
-            .setRoomSubtitle(
-                QiscusMultichannelWidgetConfig.RoomSubtitle.EDITABLE,
-                "Custom subtitle"
-            )
-            .setShowSystemMessage(true)
-            .setSessional(false)
-            .startChat(this, object : QiscusChatRoomBuilder.InitiateCallback {
+
+        val username = etDisplayName.text.toString()
+        val email = etUserEmail.text.toString()
+        qiscusMultichannelWidget.setUser(
+            email,
+            username,
+            ""
+        )
+
+        qiscusMultichannelWidget.initiateChat().setChannelId(125149).startChat(
+            this,
+            object : QiscusChatRoomBuilder.InitiateCallback {
                 override fun onProgress() {
-                    Log.i("InitiateCallback", "onProgress: ")
-                    login.isEnabled = false
-                    login.background = ContextCompat.getDrawable(
-                        this@MainActivity,
-                        R.drawable.bt_qiscus_radius_disable
-                    )
+
                 }
 
                 override fun onSuccess(qChatRoom: QChatRoom) {
-                    Log.i("InitiateCallback", "onSuccess: ")
-                    qiscusMultichannelWidget.openChatRoomById(
-                        this@MainActivity,
-                        qChatRoom.id,
-                        true
-                    ) { throwable ->
-                        throwable.printStackTrace()
-                    }
-                    login.isEnabled = true
-                    login.background = ContextCompat.getDrawable(
-                        this@MainActivity,
-                        R.drawable.bt_qiscus_radius_sdk
-                    )
+                    Log.e("defg", "sukses")
+                    MultichannelConst.qiscusCore()?.api?.getAllChatRooms(false, false, false, 1, 20)
+                        ?.subscribeOn(Schedulers.io())
+                        ?.observeOn(AndroidSchedulers.mainThread())
+                        ?.subscribe({
+                            Log.e("defg list messages", it.size.toString())
+                        },{
+                            Log.e("defg", it.message.toString())
+                        })
                 }
 
                 override fun onError(throwable: Throwable) {
-                    Log.e("InitiateCallback", "onError: ${throwable.message}")
-                    login.isEnabled = true
-                    login.background = ContextCompat.getDrawable(
-                        this@MainActivity,
-                        R.drawable.bt_qiscus_radius_sdk
-                    )
+
                 }
-            })
+
+            }
+        )
 
         // only 1 after initiateChat
         if (qiscusMultichannelWidget.hasSetupUser()) {

@@ -147,6 +147,7 @@ class QiscusMultichannelWidget private constructor(
 
     override fun getColor(): QiscusMultichannelWidgetColor = color
 
+
     override fun loginMultiChannel(
         name: String?,
         userId: String?,
